@@ -53,6 +53,7 @@ export class VideoPage extends BasePage {
   }
 
   async getRelatedVideoCount(): Promise<number> {
+    await this.relatedVideos.first().waitFor({ state: 'visible', timeout: 10000 });
     return this.relatedVideos.count();
   }
 
