@@ -1,24 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-/**
- * YouTube Data API v3 tests.
- *
- * PREREQUISITES:
- *   1. Create a Google Cloud project at https://console.cloud.google.com
- *   2. Enable the "YouTube Data API v3"
- *   3. Create an API Key credential
- *   4. Add it to your .env file:  YOUTUBE_API_KEY=your_key_here
- *
- * Playwright's `request` fixture gives you a built-in HTTP client —
- * no need for `fetch` or `axios`. It automatically handles base URLs,
- * headers, and response parsing.
- */
-
 const API_BASE = 'https://www.googleapis.com/youtube/v3';
 
-// `test.describe` groups related tests together in reports
 test.describe('YouTube Data API v3', () => {
-  // Skip all tests in this block if no API key is configured
   test.skip(!process.env.YOUTUBE_API_KEY, 'YOUTUBE_API_KEY not set in .env — skipping API tests');
 
   test('search endpoint returns video results', async ({ request }) => {
@@ -55,14 +39,29 @@ test.describe('YouTube Data API v3', () => {
     expect(body.items[0].id).toBe('jNQXAC9IVRw');
   });
 
-  test('API returns 400 for a missing required parameter', async ({ request }) => {
+  test('API returns id-only results when part is not set', async ({ request }) => {
     const response = await request.get(`${API_BASE}/search`, {
       params: {
-        // `part` is required — omitting it should return a 400 Bad Request
         q: 'test',
         key: process.env.YOUTUBE_API_KEY!,
       },
     });
+
+      expect(response.status()).toBe(200);
+    const body = await response.json() as { items: Array<Record<string, unknown>> };
+    expect(body.items.length).toBeGreaterThan(0);
+    // Items should only contain id — no snippet since part was not requested
+    expect(body.items[0]).not.toHaveProperty('snippet');
+    });
+
+    test('API returns 400 for invalid channelID', async ({request}) => {
+      const response = await request.get(`${API_BASE}/search`, {
+        params: {
+          channelId: 'definitelyNotARealChannelID',
+          q: 'test',
+          key: process.env.YOUTUBE_API_KEY!,
+        }
+      });
 
     expect(response.status()).toBe(400);
   });
