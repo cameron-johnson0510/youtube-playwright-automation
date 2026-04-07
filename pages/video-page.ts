@@ -21,7 +21,7 @@ export class VideoPage extends BasePage {
     this.likeButton = page.locator('like-button-view-model button');
     this.moreActionsButton = page.locator('ytd-menu-renderer yt-icon-button');
     this.ageRestrictionMessage = page.locator('ytd-watch-needs-sign-in-renderer');
-    this.unavailableMessage = page.locator('yt-formatted-string:has-text("unavailable")');
+    this.unavailableMessage = page.getByText('This video isn\'t available anymore');
     this.relatedVideos = page.getByRole('heading', { level: 3 });
   }
 
