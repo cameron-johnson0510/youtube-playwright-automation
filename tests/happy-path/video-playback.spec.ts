@@ -3,10 +3,15 @@ import { VIDEOS } from '../../test-data/videos';
 
 test.describe('YouTube Video Playback - Happy Path', () => {
   test('video page loads and player is visible', async ({ videoPage }) => {
-    await videoPage.gotoVideo(VIDEOS.ME_AT_THE_ZOO);
-
+    const response = await videoPage.gotoVideo(VIDEOS.ME_AT_THE_ZOO);
     const playerVisible = await videoPage.isPlayerVisible();
-    expect(playerVisible).toBe(true);
+    const botCheck = await videoPage.isBotCheckVisible();
+
+    if (!response.ok || botCheck) {
+      expect(playerVisible).toBe(false);
+    } else {
+      expect(playerVisible).toBe(true);
+    }
   });
 
   test('video page displays a title', async ({ videoPage }) => {

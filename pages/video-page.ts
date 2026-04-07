@@ -11,6 +11,7 @@ export class VideoPage extends BasePage {
   private readonly ageRestrictionMessage: Locator;
   private readonly unavailableMessage: Locator;
   private readonly relatedVideos: Locator;
+  private readonly botCheckPrompt: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -23,11 +24,17 @@ export class VideoPage extends BasePage {
     this.ageRestrictionMessage = page.locator('ytd-watch-needs-sign-in-renderer');
     this.unavailableMessage = page.getByText('This video isn\'t available anymore');
     this.relatedVideos = page.getByRole('heading', { level: 3 });
+    this.botCheckPrompt = page.getByText("Sign in to confirm you're not a bot", { exact: false });
   }
 
-  async gotoVideo(videoId: string): Promise<void> {
-    await this.page.goto(`/watch?v=${videoId}`);
+  async gotoVideo(videoId: string): Promise<{ status: number; ok: boolean }> {
+    const response = await this.page.goto(`/watch?v=${videoId}`);
     await this.waitForNetworkIdle();
+    return { status: response?.status() ?? 0, ok: response?.ok() ?? false };
+  }
+
+  async isBotCheckVisible(): Promise<boolean> {
+    return this.botCheckPrompt.isVisible();
   }
 
   async getVideoTitle(): Promise<string> {
