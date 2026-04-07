@@ -5,7 +5,8 @@ test.describe('YouTube Video Playback - Happy Path', () => {
   test('video page loads and player is visible', async ({ videoPage }) => {
     await videoPage.gotoVideo(VIDEOS.ME_AT_THE_ZOO);
 
-    expect(await videoPage.isPlayerVisible()).toBe(true);
+    const playerVisible = await videoPage.isPlayerVisible();
+    expect(playerVisible).toBe(true);
   });
 
   test('video page displays a title', async ({ videoPage }) => {

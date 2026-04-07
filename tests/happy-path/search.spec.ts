@@ -3,7 +3,6 @@ import { SEARCH_QUERIES } from '../../test-data/videos';
 
 test.describe('YouTube Search - Happy Path', () => {
   test.beforeEach(async ({ homePage }) => {
-    // `beforeEach` runs before every test in this describe block
     await homePage.goto();
   });
 

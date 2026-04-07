@@ -6,7 +6,6 @@ test.describe('YouTube Video - Error States', () => {
     await videoPage.gotoVideo('INVALID_VIDEO_ID_XYZ');
 
     const isUnavailable = await videoPage.isVideoUnavailable();
-    // Even if the message text changes, the page should not navigate away from YouTube
     expect(page.url()).toContain('youtube.com');
     expect(isUnavailable).toBe(true);
   });

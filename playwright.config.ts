@@ -14,12 +14,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Retry failed tests once on CI, never locally
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
 
-  // Limit parallel workers to 4 to avoid overloading YouTube
   workers: process.env.CI ? 2 : 4,
 
-  // Reporters: Allure for rich HTML reports + built-in list output
   reporter: [
     ['list'],
     ['allure-playwright', { outputFolder: 'allure-results' }],
