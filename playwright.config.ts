@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  // Directory where Playwright looks for test files
   testDir: './tests',
 
   // Run tests within each file in parallel
@@ -16,7 +15,7 @@ export default defineConfig({
   // Retry failed tests once on CI, never locally
   retries: process.env.CI ? 2 : 0,
 
-  workers: process.env.CI ? 2 : 4,
+  workers: process.env.CI ? 1 : 4,
 
   reporter: [
     ['list'],
@@ -24,14 +23,11 @@ export default defineConfig({
   ],
 
   use: {
-    // Base URL so tests can use relative paths like page.goto('/')
     baseURL: 'https://www.youtube.com',
 
-    // Record a video and screenshot on every test failure
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
 
-    // Show browser actions in trace viewer on failure (great for debugging)
     trace: 'retain-on-failure',
   },
 
