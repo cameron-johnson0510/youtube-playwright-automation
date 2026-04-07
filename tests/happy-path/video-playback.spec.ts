@@ -4,8 +4,8 @@ import { VIDEOS } from '../../test-data/videos';
 test.describe('YouTube Video Playback - Happy Path', () => {
   test.beforeEach(async ({ videoPage }) => {
     const response = await videoPage.gotoVideo(VIDEOS.ME_AT_THE_ZOO);
-    const botCheck = await videoPage.isBotCheckVisible();
-    test.skip(!response.ok || botCheck, 'YouTube bot check triggered — skipping');
+    const result = await videoPage.waitForPlayerOrBotCheck();
+    test.skip(!response.ok || result === 'blocked', 'YouTube bot check triggered — skipping');
   });
 
   test('video page loads and player is visible', async ({ videoPage }) => {

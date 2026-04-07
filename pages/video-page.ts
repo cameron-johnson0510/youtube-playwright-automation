@@ -33,8 +33,20 @@ export class VideoPage extends BasePage {
     return { status: response?.status() ?? 0, ok: response?.ok() ?? false };
   }
 
-  async isBotCheckVisible(): Promise<boolean> {
-    return this.botCheckPrompt.isVisible();
+  async waitForPlayerOrBotCheck(): Promise<'player' | 'blocked'> {
+    try {
+      await Promise.race([
+        this.player.waitFor({ state: 'visible', timeout: 10000 }),
+        this.botCheckPrompt.waitFor({ state: 'visible', timeout: 10000 }),
+      ]);
+    } catch {
+      return 'blocked';
+    }
+    return (await this.botCheckPrompt.isVisible()) ? 'blocked' : 'player';
+  }
+
+  async isPlayerVisible(): Promise<boolean> {
+    return this.player.isVisible();
   }
 
   async getVideoTitle(): Promise<string> {
@@ -45,10 +57,6 @@ export class VideoPage extends BasePage {
   async getChannelName(): Promise<string> {
     await this.channelName.waitFor();
     return this.channelName.first().innerText();
-  }
-
-  async isPlayerVisible(): Promise<boolean> {
-    return this.player.isVisible();
   }
 
   async isAgeRestricted(): Promise<boolean> {
